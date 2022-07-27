@@ -15,7 +15,12 @@ type ListProps = {
 const List = ({ url }: ListProps) => {
   const { data, error } = useSWR<ProductsResponse>(
     `/api/products?url=${url}`,
-    fetcher
+    fetcher,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   if (!url) return null;
