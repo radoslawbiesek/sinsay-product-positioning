@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -11,11 +11,11 @@ type FormElements = HTMLFormControlsCollection & {
 
 type FormElement = HTMLFormElement & {
   readonly elements: FormElements;
-}
+};
 
 type UrlFormProps = {
-  onSubmit: (url: string) => void
-}
+  onSubmit: (url: string) => void;
+};
 
 const UrlForm = ({ onSubmit }: UrlFormProps) => {
   const handleSubmit = (e: React.SyntheticEvent<FormElement>) => {
@@ -25,7 +25,7 @@ const UrlForm = ({ onSubmit }: UrlFormProps) => {
     if (!value) return;
 
     onSubmit(value);
-  }
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -36,7 +36,7 @@ const UrlForm = ({ onSubmit }: UrlFormProps) => {
         </Button>
       </InputGroup>
     </Form>
-  )
-}
+  );
+};
 
-export default UrlForm
+export default UrlForm;
