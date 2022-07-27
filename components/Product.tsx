@@ -19,7 +19,7 @@ function calcDiscount(prices: string[]): number {
 
 const SizesInfo = ({ url }: { url: string }) => {
   const { data, error } = useSWR<ProductResponse>(
-    `/product?url=${url}`,
+    `/api/product?url=${url}`,
     fetcher
   );
 

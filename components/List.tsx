@@ -14,7 +14,7 @@ type ListProps = {
 
 const List = ({ url }: ListProps) => {
   const { data, error } = useSWR<ProductsResponse>(
-    `/products?url=${url}`,
+    `/api/products?url=${url}`,
     fetcher
   );
 
