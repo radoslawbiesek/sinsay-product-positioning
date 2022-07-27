@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import useSWR from 'swr';
 
 import Alert from 'react-bootstrap/Alert';

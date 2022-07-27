@@ -7,7 +7,7 @@ export type ProductData = {
   url: string;
   imageUrl: string;
   title: string;
-  prices: [string] | [string, string];
+  prices: string[];
 };
 
 export type ProductDetails = {
