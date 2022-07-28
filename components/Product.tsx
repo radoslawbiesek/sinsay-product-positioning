@@ -63,7 +63,7 @@ const Product = ({
   }
 
   return (
-    <Card style={{ width: '260px', textAlign: 'center', margin: '20px' }}>
+    <Card style={{ textAlign: 'center', margin: '20px' }}>
       <Card.Img
         src={imageUrl}
         style={{ cursor: 'pointer' }}
