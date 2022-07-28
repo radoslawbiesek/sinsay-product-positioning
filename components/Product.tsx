@@ -1,9 +1,7 @@
 import * as React from 'react';
 import useSWR from 'swr';
 
-import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { Card, Badge, ListGroup } from 'react-bootstrap';
 
 import { ProductData, ProductResponse } from '../types';
 import { fetcher } from '../utils';
@@ -63,7 +61,7 @@ const Product = ({
   }
 
   return (
-    <Card style={{ textAlign: 'center', margin: '20px' }}>
+    <Card style={{ textAlign: 'center', margin: '10px' }}>
       <Card.Img
         src={imageUrl}
         style={{ cursor: 'pointer' }}

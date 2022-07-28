@@ -1,8 +1,6 @@
 import * as React from 'react';
 
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { Col, Form, Row } from 'react-bootstrap';
 
 const SELECT_VALUES = [2, 3, 4, 6];
 

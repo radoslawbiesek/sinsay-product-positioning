@@ -1,14 +1,11 @@
 import * as React from 'react';
 import useSWR from 'swr';
 
-import Alert from 'react-bootstrap/Alert';
-import Spinner from 'react-bootstrap/Spinner';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { Container, Alert, Spinner, Col, Row } from 'react-bootstrap';
 
 import Product from './Product';
 import Select from './Select';
+import Aside from './Aside';
 
 import { fetcher } from '../utils';
 import { ProductsResponse } from '../types';
@@ -39,19 +36,36 @@ const List = ({ url }: ListProps) => {
       </Alert>
     );
 
-  if (!data) return <Spinner animation="border" variant="dark" />;
+  if (!data)
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <Spinner animation="border" variant="dark" />
+      </div>
+    );
 
   return (
     <div>
-      <Select itemsPerRow={itemsPerRow} setItemsPerRow={setItemsPerRow} />
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {data.data.length > 0 &&
-          data.data.map((product) => (
-            <Col xs={12 / itemsPerRow} key={product.sku}>
-              <Product product={product} />
-            </Col>
-          ))}
-      </div>
+      <Container>
+        <span>
+          <strong>Liczba produktów:</strong> {data.data.length}
+        </span>
+        <Select itemsPerRow={itemsPerRow} setItemsPerRow={setItemsPerRow} />
+        <Row>
+          <Col xs="2">
+            <Aside data={data} />
+          </Col>
+          <Col xs="10">
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {data.data.length > 0 &&
+                data.data.map((product) => (
+                  <Col xs={12 / itemsPerRow} key={product.sku}>
+                    <Product product={product} />
+                  </Col>
+                ))}
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
