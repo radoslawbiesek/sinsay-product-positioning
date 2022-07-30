@@ -42,9 +42,13 @@ export default async function handler(
 
       const priceNodes = pricesSection.children!;
       for (let i = 0; i < priceNodes.length; i++) {
-        const price = pricesSection.children[i];
+        const priceNode = pricesSection.children[i];
+        const [price, currency] = priceNode.children[0].innerHTML
+          .replace('&nbsp;', ' ')
+          .split(' ');
+        const value = parseFloat(price.replace(',', '.'));
 
-        prices.push(price.children[0].innerHTML.replace('&nbsp;', ' '));
+        prices.push({ currency, value });
       }
 
       products.push({

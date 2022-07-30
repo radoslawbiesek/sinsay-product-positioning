@@ -6,15 +6,6 @@ import SizesInfo from './SizesInfo';
 import DragItem, { DragItemProps } from './DragItem';
 import { ProductData } from '../types';
 
-function calcDiscount(prices: string[]): number {
-  const values = prices.map((price) =>
-    parseFloat(price.split(' ')[0].replace(',', '.'))
-  );
-  values.sort();
-
-  return 100 - Math.ceil((values[0] / values[1]) * 100);
-}
-
 type ProductProps = {
   product: ProductData;
 } & DragItemProps;
@@ -25,10 +16,34 @@ const Product = ({
   move,
   id,
 }: ProductProps) => {
-  const isDiscount = prices.length === 2;
-  let discount = 0;
+  let discount: number;
   if (prices.length === 2) {
-    discount = calcDiscount(prices);
+    discount = 100 - Math.ceil((prices[0].value / prices[1].value) * 100);
+  } else {
+    discount = 0;
+  }
+
+  const renderPrices = (prices: ProductData["prices"]) => {
+    if (prices.length === 2) {
+      const currentPrice = prices[0];
+      const regularPrice = prices[1];
+      return (
+        <>
+          <span style={{ fontSize: '1.2rem' }} className="text-danger">
+            {currentPrice.value}{' '}
+          </span>
+          <span style={{ textDecoration: 'line-through' }}>
+            {regularPrice.value}{' '}
+          </span>
+          <span>{currentPrice.currency}</span>
+        </>
+      )
+    }
+
+    const price = prices[0];
+    return (
+      <span>{price.value} {price.currency}</span>
+    )
   }
 
   return (
@@ -50,18 +65,7 @@ const Product = ({
           </Card.Title>
           <Card.Title>{sku}</Card.Title>
           <Card.Text>
-            {isDiscount ? (
-              <>
-                <span style={{ fontSize: '1.2rem' }} className="text-danger">
-                  {prices[0]}{' '}
-                </span>
-                <span style={{ textDecoration: 'line-through' }}>
-                  {prices[1]}
-                </span>
-              </>
-            ) : (
-              <span>{prices[0]}</span>
-            )}
+            {renderPrices(prices)}
           </Card.Text>
         </ListGroup>
         <Card.Text style={{ padding: '5px 0' }}>
