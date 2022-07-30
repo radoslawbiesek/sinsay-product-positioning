@@ -55,6 +55,7 @@ const List = ({ list }: ListProps) => {
                       <Product
                         id={product.sku}
                         product={product}
+                        listLen={localList.length}
                         index={index}
                         move={move}
                       />

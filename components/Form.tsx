@@ -1,22 +1,14 @@
 import * as React from 'react';
-import type { NextPage } from 'next';
 
 import { Form, Button, InputGroup } from 'react-bootstrap';
-
-type FormElements = HTMLFormControlsCollection & {
-  urlInput: HTMLInputElement;
-};
-
-type FormElement = HTMLFormElement & {
-  readonly elements: FormElements;
-};
+import { FormElement } from '../types';
 
 type UrlFormProps = {
   onSubmit: (url: string) => void;
 };
 
 const UrlForm = ({ onSubmit }: UrlFormProps) => {
-  const handleSubmit = (e: React.SyntheticEvent<FormElement>) => {
+  const handleSubmit = (e: React.SyntheticEvent<FormElement<'urlInput'>>) => {
     e.preventDefault();
     const value = e.currentTarget.elements.urlInput.value;
 

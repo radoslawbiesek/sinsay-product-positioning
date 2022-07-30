@@ -17,3 +17,9 @@ export type ProductDetails = {
 };
 
 export type ProductsResponse = Response<ProductData[]>;
+
+export type FormElement<T extends string> = HTMLFormElement & {
+  readonly elements: HTMLFormControlsCollection & {
+    [fieldName in T]: HTMLInputElement;
+  };
+};
