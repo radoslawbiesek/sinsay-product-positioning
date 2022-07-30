@@ -3,8 +3,9 @@ import useSWR from 'swr';
 
 import { Card, Badge, ListGroup } from 'react-bootstrap';
 
-import { ProductData, ProductResponse } from '../types';
+import { ProductData, ProductDetails, ProductResponse } from '../types';
 import { fetcher } from '../utils';
+import ProductsService from '../services/products';
 
 function calcDiscount(prices: string[]): number {
   const values = prices.map((price) =>
@@ -16,15 +17,11 @@ function calcDiscount(prices: string[]): number {
 }
 
 const SizesInfo = ({ url }: { url: string }) => {
-  const { data, error } = useSWR<ProductResponse>(
-    `/api/product?url=${url}`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data, error } = useSWR(url, ProductsService.getProductDetails, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   if (error)
     return <span className="text-danger">Nie udało się pobrać rozmiarów</span>;
@@ -33,7 +30,7 @@ const SizesInfo = ({ url }: { url: string }) => {
 
   return (
     <>
-      {data.data.sizes.map((size) => (
+      {data.sizes.map((size) => (
         <Badge
           key={size}
           bg="light"

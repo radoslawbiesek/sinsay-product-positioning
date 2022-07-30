@@ -14,5 +14,4 @@ export type ProductDetails = {
   sizes: string[];
 };
 
-export type ProductResponse = Response<ProductDetails>;
 export type ProductsResponse = Response<ProductData[]>;
