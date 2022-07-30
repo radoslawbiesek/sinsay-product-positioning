@@ -2,17 +2,17 @@ import * as React from 'react';
 
 import { Button, Overlay, Tooltip } from 'react-bootstrap';
 
-import { ProductsResponse } from '../types';
+import { ProductData } from '../types';
 
 type AsideProps = {
-  data: ProductsResponse;
+  list: ProductData[];
 };
 
-const Aside = ({ data }: AsideProps) => {
+const Aside = ({ list }: AsideProps) => {
   const [showTooltip, setShowTooltip] = React.useState(false);
   const target = React.useRef(null);
 
-  const skuList = data.data.map((product) => product.sku);
+  const skuList = list.map((product) => product.sku);
 
   const onClick = () => {
     navigator.clipboard.writeText(skuList.join('\n')).then(() => {

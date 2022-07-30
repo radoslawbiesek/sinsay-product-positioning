@@ -1,68 +1,67 @@
 import * as React from 'react';
-import useSWR from 'swr';
+import * as _ from 'lodash';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { Container, Alert, Spinner, Col, Row } from 'react-bootstrap';
+import { Container, Col, Row } from 'react-bootstrap';
 
 import Product from './Product';
 import Select from './Select';
 import Aside from './Aside';
 
-import { fetcher } from '../utils';
-import { ProductsResponse } from '../types';
+import { ProductData } from '../types';
 
 type ListProps = {
-  url: string;
+  list: ProductData[];
 };
 
-const List = ({ url }: ListProps) => {
-  const { data, error } = useSWR<ProductsResponse>(
-    `/api/products?url=${url}`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+const List = ({ list }: ListProps) => {
+  const [localList, setLocalList] = React.useState<ProductData[]>([]);
+
+  React.useEffect(() => {
+    if (list) {
+      setLocalList(list);
     }
-  );
+  }, [list]);
 
   const [itemsPerRow, setItemsPerRow] = React.useState(4);
 
-  if (!url) return null;
-
-  if (error)
-    return (
-      <Alert variant="danger">
-        Nie udało się załadować wyników. Spróbuj ponownie.
-      </Alert>
-    );
-
-  if (!data)
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <Spinner animation="border" variant="dark" />
-      </div>
-    );
+  const move = React.useCallback((dragIndex: number, hoverIndex: number) => {
+    setLocalList((list) => {
+      const copy = _.cloneDeep(list);
+      const itemToMove = copy.splice(dragIndex, 1)[0];
+      copy.splice(hoverIndex, 0, itemToMove);
+      return copy;
+    });
+  }, []);
 
   return (
     <div>
       <Container>
         <span>
-          <strong>Liczba produktów:</strong> {data.data.length}
+          <strong>Liczba produktów:</strong> {localList.length}
         </span>
         <Select itemsPerRow={itemsPerRow} setItemsPerRow={setItemsPerRow} />
         <Row>
           <Col xs="2">
-            <Aside data={data} />
+            <Aside list={localList} />
           </Col>
           <Col xs="10">
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-              {data.data.length > 0 &&
-                data.data.map((product) => (
-                  <Col xs={12 / itemsPerRow} key={product.sku}>
-                    <Product product={product} />
-                  </Col>
-                ))}
-            </div>
+            <DndProvider backend={HTML5Backend}>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {localList.length > 0 &&
+                  localList.map((product, index) => (
+                    <Col xs={12 / itemsPerRow} key={product.sku}>
+                      <Product
+                        id={product.sku}
+                        product={product}
+                        index={index}
+                        move={move}
+                      />
+                    </Col>
+                  ))}
+              </div>
+            </DndProvider>
           </Col>
         </Row>
       </Container>
