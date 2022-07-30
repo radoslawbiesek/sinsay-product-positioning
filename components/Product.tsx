@@ -23,7 +23,7 @@ const Product = ({
     discount = 0;
   }
 
-  const renderPrices = (prices: ProductData["prices"]) => {
+  const renderPrices = (prices: ProductData['prices']) => {
     if (prices.length === 2) {
       const currentPrice = prices[0];
       const regularPrice = prices[1];
@@ -37,14 +37,16 @@ const Product = ({
           </span>
           <span>{currentPrice.currency}</span>
         </>
-      )
+      );
     }
 
     const price = prices[0];
     return (
-      <span>{price.value} {price.currency}</span>
-    )
-  }
+      <span>
+        {price.value} {price.currency}
+      </span>
+    );
+  };
 
   return (
     <DragItem id={id} index={index} move={move}>
@@ -64,9 +66,7 @@ const Product = ({
             )}
           </Card.Title>
           <Card.Title>{sku}</Card.Title>
-          <Card.Text>
-            {renderPrices(prices)}
-          </Card.Text>
+          <Card.Text>{renderPrices(prices)}</Card.Text>
         </ListGroup>
         <Card.Text style={{ padding: '5px 0' }}>
           <SizesInfo url={url} />
