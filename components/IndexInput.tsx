@@ -28,7 +28,7 @@ const IndexInput = ({ value, onSubmit, maxValue }: IndexInputProps) => {
   return (
     <Form
       onSubmit={onIndexChange}
-      style={{ width: '30%', position: 'absolute', right: 0, top: 0 }}
+      style={{ width: '80px', position: 'absolute', right: 0, top: 0 }}
     >
       <Form.Control
         id="indexInput"
