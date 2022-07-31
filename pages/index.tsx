@@ -7,15 +7,15 @@ import { Alert, Spinner } from 'react-bootstrap';
 import Form from '../components/Form';
 import List from '../components/List';
 
-import { fetcher } from '../utils';
-import { ProductsResponse } from '../types';
+import { ProductData } from '../types';
+import ProductsService from '../services/products';
 
 const Home: NextPage = () => {
   const [url, setUrl] = React.useState('');
 
-  const { data, error } = useSWR<ProductsResponse>(
-    url && `/api/products?url=${url}`,
-    fetcher,
+  const { data, error } = useSWR<ProductData[]>(
+    url,
+    ProductsService.getProductsList,
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
               <Spinner animation="border" variant="dark" />
             </div>
           )}
-          {!error && data && <List list={data.data} />}
+          {!error && data && <List list={data} />}
         </>
       )}
     </div>

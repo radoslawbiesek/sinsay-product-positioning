@@ -8,9 +8,10 @@ type IndexInputProps = {
   value: number;
   onSubmit: (val: number) => void;
   maxValue: number;
+  style: React.CSSProperties;
 };
 
-const IndexInput = ({ value, onSubmit, maxValue }: IndexInputProps) => {
+const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
   const [localValue, setLocalValue] = React.useState(value);
 
   React.useEffect(() => {
@@ -26,10 +27,7 @@ const IndexInput = ({ value, onSubmit, maxValue }: IndexInputProps) => {
   };
 
   return (
-    <Form
-      onSubmit={onIndexChange}
-      style={{ width: '80px', position: 'absolute', right: 0, top: 0 }}
-    >
+    <Form onSubmit={onIndexChange} style={style}>
       <Form.Control
         id="indexInput"
         type="number"

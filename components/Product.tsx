@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { Card, Badge, ListGroup, Form } from 'react-bootstrap';
+import { Card, Badge, ListGroup } from 'react-bootstrap';
 
 import SizesInfo from './SizesInfo';
 import DragItem, { DragItemProps } from './DragItem';
-import { ProductData } from '../types';
 import IndexInput from './IndexInput';
+import { ProductData } from '../types';
 
 type ProductProps = {
   product: ProductData;
@@ -64,18 +64,22 @@ const Product = ({
             onSubmit={(newValue) => move(index, newValue - 1)}
             value={index + 1}
             maxValue={listLen}
+            style={{ width: '80px', position: 'absolute', right: 0, top: 0 }}
           />
+          {discount > 0 && (
+            <Badge
+              bg="danger"
+              style={{ position: 'absolute', right: 0, bottom: 0 }}
+            >
+              -{discount}%
+            </Badge>
+          )}
         </div>
         <ListGroup className="list-group-flush">
-          <Card.Title style={{ marginTop: 5 }}>
-            <span>{title}</span>
-            {discount > 0 && (
-              <Badge bg="danger" style={{ marginLeft: 10 }}>
-                -{discount}%
-              </Badge>
-            )}
-          </Card.Title>
-          <Card.Title>{sku}</Card.Title>
+          <Card.Text style={{ margin: '5px 0' }}>
+            <p style={{ marginBottom: 0 }}>{title}</p>
+            <span>{sku}</span>
+          </Card.Text>
           <Card.Text>{renderPrices(prices)}</Card.Text>
         </ListGroup>
         <Card.Text style={{ padding: '5px 0' }}>

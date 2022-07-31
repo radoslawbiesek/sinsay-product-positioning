@@ -1,7 +1,3 @@
-type Response<T> = {
-  data: T;
-};
-
 type Price = { currency: string; value: number };
 
 export type ProductData = {
@@ -14,9 +10,8 @@ export type ProductData = {
 
 export type ProductDetails = {
   sizes: string[];
+  isLowStock: boolean;
 };
-
-export type ProductsResponse = Response<ProductData[]>;
 
 export type FormElement<T extends string> = HTMLFormElement & {
   readonly elements: HTMLFormControlsCollection & {

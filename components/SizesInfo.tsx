@@ -23,6 +23,11 @@ const SizesInfo = ({ url }: SizesInfoProps) => {
 
   return (
     <>
+      {data.isLowStock && (
+        <div>
+          <Badge bg="danger">OSTATNIE SZTUKI</Badge>
+        </div>
+      )}
       {data.sizes.map((size) => (
         <Badge
           key={size}
