@@ -68,6 +68,7 @@ export default class ProductsService {
 
         const urlRegex = /<ahref="(.*?)"/;
         const url = articleMatch.match(urlRegex)?.[1] || '';
+        const title = getTitleFromSlug(url);
 
         const imageUrlRegex = /data-src="(.*?)"/;
         const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || '';
@@ -90,11 +91,6 @@ export default class ProductsService {
 
         const figcaptionRegex = /<figcaption.*>(.*?)<\/figcaption>/;
         const figcaption = articleMatch.match(figcaptionRegex)?.[0];
-        let title = '';
-        if (figcaption) {
-          const titleMatch = /<a.*>(.*?)<\/a>/;
-          title = figcaption.match(titleMatch)?.[1] || '';
-        }
 
         products.push({ sku, url, imageUrl, prices, title });
       }
@@ -102,4 +98,13 @@ export default class ProductsService {
 
     return products;
   };
+}
+
+function getTitleFromSlug(url: string) {
+  const slugArr = url.split('-').slice(0, -2);
+  const urlArr = slugArr[0].split('/');
+  const firstPart = urlArr[urlArr.length - 1];
+  slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
+
+  return slugArr.join(' ');
 }

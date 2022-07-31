@@ -10,18 +10,11 @@ import useFetch from '../utils/useFetch';
 import ProductsService from '../services/products';
 
 const Home: NextPage = () => {
-  const [url, setUrl] = React.useState('');
-
   const { execute, state } = useFetch(ProductsService.getProductsList);
-
-  React.useEffect(() => {
-    if (!url) return;
-    execute(url);
-  }, [url, execute]);
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <Form onSubmit={setUrl} />
+      <Form onSubmit={execute} />
       <>
         {state.status === 'rejected' && (
           <Alert variant="danger">
