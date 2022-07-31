@@ -15,7 +15,7 @@ type ProductProps = {
   move: (sourceIndex: number, targetIndex: number) => void;
 } & ProductData;
 
-const Product = ({
+const Product = React.memo(({
   id,
   sku,
   imageUrl,
@@ -118,6 +118,8 @@ const Product = ({
       </Card>
     </Col >
   );
-};
+});
+
+Product.displayName = 'Product';
 
 export default Product;
