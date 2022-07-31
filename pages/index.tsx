@@ -1,33 +1,46 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
+import useSWR from 'swr';
 
 import { Alert, Spinner } from 'react-bootstrap';
 
 import Form from '../components/Form';
 import List from '../components/List';
 
-import useFetch from '../utils/useFetch';
 import ProductsService from '../services/products';
+import { ProductData } from '../types';
 
 const Home: NextPage = () => {
-  const { execute, state } = useFetch(ProductsService.getProductsList);
+  const [url, setUrl] = React.useState('');
+
+  const { data, error } = useSWR<ProductData[]>(
+    url,
+    ProductsService.getProductsList,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <Form onSubmit={execute} />
-      <>
-        {state.status === 'rejected' && (
-          <Alert variant="danger">
-            Nie udało się załadować wyników. Spróbuj ponownie.
-          </Alert>
-        )}
-        {state.status === 'pending' && (
-          <div style={{ textAlign: 'center' }}>
-            <Spinner animation="border" variant="dark" />
-          </div>
-        )}
-        {state.status === 'resolved' && <List list={state.data} />}
-      </>
+      <Form onSubmit={setUrl} />
+      {url && (
+        <>
+          {error && (
+            <Alert variant="danger">
+              Nie udało się załadować wyników. Spróbuj ponownie.
+            </Alert>
+          )}
+          {!data && (
+            <div style={{ textAlign: 'center' }}>
+              <Spinner animation="border" variant="dark" />
+            </div>
+          )}
+          {!error && data && <List list={data} />}
+        </>
+      )}
     </div>
   );
 };

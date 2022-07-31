@@ -7,6 +7,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -30,6 +32,7 @@ type ListProps = {
 const List = ({ list }: ListProps) => {
   const [localList, setLocalList] = React.useState(list);
   const [itemsPerRow, setItemsPerRow] = React.useState(4);
+  const [activeId, setActiveId] = React.useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -42,6 +45,10 @@ const List = ({ list }: ListProps) => {
     setLocalList((list) => arrayMove(list, oldIndex, newIndex));
   }, []);
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -50,6 +57,10 @@ const List = ({ list }: ListProps) => {
     const newIndex = localList.findIndex((product) => product.id === over.id);
 
     move(oldIndex, newIndex);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId('');
   };
 
   return (
@@ -68,6 +79,8 @@ const List = ({ list }: ListProps) => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
+              onDragStart={handleDragStart}
+              onDragCancel={handleDragCancel}
             >
               <SortableContext items={localList} strategy={rectSortingStrategy}>
                 <div
@@ -79,7 +92,6 @@ const List = ({ list }: ListProps) => {
                   {localList.map((product, index) => (
                     <Product
                       key={product.sku}
-                      listLen={localList.length}
                       itemsPerRow={itemsPerRow}
                       index={index}
                       move={move}
@@ -88,6 +100,15 @@ const List = ({ list }: ListProps) => {
                   ))}
                 </div>
               </SortableContext>
+              <DragOverlay>
+                <Product
+                  itemsPerRow={itemsPerRow}
+                  index={localList.findIndex((p) => p.id === activeId)}
+                  move={move}
+                  overlay={true}
+                  {...(localList.find((p) => p.id === activeId) as ProductData)}
+                />
+              </DragOverlay>
             </DndContext>
           </Col>
         </Row>

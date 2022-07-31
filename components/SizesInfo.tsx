@@ -1,44 +1,49 @@
 import * as React from 'react';
+import useSWR from 'swr';
 
 import { Badge } from 'react-bootstrap';
 
 import ProductsService from '../services/products';
-import useFetch from '../utils/useFetch';
+import { ProductDetails } from '../types';
 
 type SizesInfoProps = {
   url: string;
   isCompact: boolean;
 };
 
-const SizesInfo = ({ url, isCompact }: SizesInfoProps) => {
-  const { execute, state } = useFetch(ProductsService.getProductDetails);
-
-  React.useEffect(() => {
-    execute(url);
-  }, [url, execute]);
+const SizesInfo = React.memo(({ url, isCompact }: SizesInfoProps) => {
+  const { data, error } = useSWR<ProductDetails>(
+    url,
+    ProductsService.getProductDetails,
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   if (!isCompact) {
-    if (state.status === 'rejected')
+    if (error)
       return (
         <span className="text-danger">Nie udało się pobrać rozmiarów</span>
       );
 
-    if (state.status === 'pending')
+    if (!data)
       return (
         <span className="text-secondary">Trwa pobieranie rozmiarów...</span>
       );
   }
 
-  if (state.status === 'resolved') {
+  if (data) {
     return (
       <>
-        {state.data.isLowStock && (
-          <Badge bg="danger" style={{ marginRight: 10 }}>
+        {data.isLowStock && (
+          <Badge bg="secondary" style={{ marginRight: 10 }}>
             {isCompact ? 'ost.' : 'OSTATNIE SZTUKI'}
           </Badge>
         )}
         {!isCompact
-          ? state.data.sizes.map((size) => (
+          ? data.sizes.map((size) => (
               <Badge
                 key={size}
                 bg="light"
@@ -48,9 +53,9 @@ const SizesInfo = ({ url, isCompact }: SizesInfoProps) => {
                 {size}
               </Badge>
             ))
-          : !state.data.isLowStock && (
+          : !data.isLowStock && (
               <Badge bg="light" text="dark">
-                {state.data.sizes.length} r.
+                {data.sizes.length} r.
               </Badge>
             )}
       </>
@@ -58,6 +63,8 @@ const SizesInfo = ({ url, isCompact }: SizesInfoProps) => {
   }
 
   return null;
-};
+});
+
+SizesInfo.displayName = 'SizesInfo';
 
 export default SizesInfo;

@@ -7,11 +7,10 @@ import { FormElement } from '../types';
 type IndexInputProps = {
   value: number;
   onSubmit: (val: number) => void;
-  maxValue: number;
   style: React.CSSProperties;
 };
 
-const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
+const IndexInput = ({ value, onSubmit, style }: IndexInputProps) => {
   const [localValue, setLocalValue] = React.useState(value);
 
   React.useEffect(() => {
@@ -37,7 +36,6 @@ const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
         id="indexInput"
         type="number"
         min={1}
-        max={maxValue}
         value={localValue}
         onChange={(e) => setLocalValue(+e.target.value)}
       />
