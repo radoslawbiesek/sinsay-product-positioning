@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Col, Form, Row } from 'react-bootstrap';
 
-const SELECT_VALUES = [2, 3, 4, 6];
+const SELECT_VALUES = [2, 3, 4, 6, 12];
 
 type SelectProps = {
   itemsPerRow: number;

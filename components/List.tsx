@@ -62,6 +62,7 @@ const List = ({ list }: ListProps) => {
                       listLen={localList.length}
                       index={index}
                       move={move}
+                      isCompact={itemsPerRow === 12}
                     />
                   </Col>
                 ))}

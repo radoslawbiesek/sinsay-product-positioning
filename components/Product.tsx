@@ -10,11 +10,13 @@ import { ProductData } from '../types';
 type ProductProps = {
   product: ProductData;
   listLen: number;
+  isCompact: boolean;
 } & DragItemProps;
 
 const Product = ({
   product: { sku, imageUrl, title, prices, url },
   listLen,
+  isCompact,
   index,
   move,
   id,
@@ -60,31 +62,42 @@ const Product = ({
             style={{ cursor: 'pointer' }}
             onClick={() => window.open(url, '_blank')}
           />
-          <IndexInput
-            onSubmit={(newValue) => move(index, newValue - 1)}
-            value={index + 1}
-            maxValue={listLen}
-            style={{ width: '80px', position: 'absolute', right: 0, top: 0 }}
-          />
-          {discount > 0 && (
-            <Badge
-              bg="danger"
-              style={{ position: 'absolute', left: 0, top: 0 }}
-            >
-              -{discount}%
-            </Badge>
+          {!isCompact && (
+            <>
+              <IndexInput
+                onSubmit={(newValue) => move(index, newValue - 1)}
+                value={index + 1}
+                maxValue={listLen}
+                style={{
+                  width: '80px',
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                }}
+              />
+              {discount > 0 && (
+                <Badge
+                  bg="danger"
+                  style={{ position: 'absolute', left: 0, top: 0 }}
+                >
+                  -{discount}%
+                </Badge>
+              )}
+            </>
           )}
         </div>
-        <ListGroup className="list-group-flush">
-          <Card.Text style={{ margin: '5px 0' }}>
-            <span style={{ marginBottom: 0 }}>{title}</span>
-            <br />
-            <span>{sku}</span>
-          </Card.Text>
-          <Card.Text>{renderPrices(prices)}</Card.Text>
-        </ListGroup>
+        {!isCompact && (
+          <ListGroup className="list-group-flush">
+            <Card.Text style={{ margin: '5px 0' }}>
+              <span style={{ marginBottom: 0 }}>{title}</span>
+              <br />
+              <span>{sku}</span>
+            </Card.Text>
+            <Card.Text>{renderPrices(prices)}</Card.Text>
+          </ListGroup>
+        )}
         <Card.Text style={{ padding: '5px 0' }}>
-          <SizesInfo url={url} />
+          <SizesInfo url={url} isCompact={isCompact} />
         </Card.Text>
       </Card>
     </DragItem>
