@@ -9,17 +9,19 @@ import IndexInput from './IndexInput';
 import { ProductData } from '../types';
 
 type ProductProps = {
-  id: string;
-  product: ProductData;
   listLen: number;
   index: number;
   itemsPerRow: number;
   move: (sourceIndex: number, targetIndex: number) => void;
-};
+} & ProductData;
 
 const Product = ({
   id,
-  product: { sku, imageUrl, title, prices, url },
+  sku,
+  imageUrl,
+  title,
+  prices,
+  url,
   listLen,
   index,
   move,
@@ -62,66 +64,62 @@ const Product = ({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
     <Col
       xs={12 / itemsPerRow}
       ref={setNodeRef}
-      style={style}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
       {...attributes}
       {...listeners}
     >
-      <div>
-        <Card style={{ textAlign: 'center', margin: '10px' }}>
-          <div style={{ position: 'relative' }}>
-            <Card.Img
-              src={imageUrl}
-              style={{ cursor: 'pointer' }}
-              onClick={() => window.open(url, '_blank')}
-            />
-            {!isCompact && (
-              <>
-                <IndexInput
-                  onSubmit={(newValue) => move(index, newValue - 1)}
-                  value={index + 1}
-                  maxValue={listLen}
-                  style={{
-                    width: '80px',
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                  }}
-                />
-                {discount > 0 && (
-                  <Badge
-                    bg="danger"
-                    style={{ position: 'absolute', left: 0, top: 0 }}
-                  >
-                    -{discount}%
-                  </Badge>
-                )}
-              </>
-            )}
-          </div>
+      <Card style={{ textAlign: 'center', margin: '10px' }}>
+        <div style={{ position: 'relative' }}>
+          <Card.Img
+            src={imageUrl}
+            style={{ cursor: 'pointer' }}
+            onClick={() => window.open(url, '_blank')}
+          />
           {!isCompact && (
-            <ListGroup className="list-group-flush">
-              <Card.Text style={{ margin: '5px 0' }}>
-                <span style={{ marginBottom: 0 }}>{title}</span>
-                <br />
-                <span>{sku}</span>
-              </Card.Text>
-              <Card.Text>{renderPrices(prices)}</Card.Text>
-            </ListGroup>
+            <>
+              <IndexInput
+                onSubmit={(newValue) => move(index, newValue - 1)}
+                value={index + 1}
+                maxValue={listLen}
+                style={{
+                  width: '80px',
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                }}
+              />
+              {discount > 0 && (
+                <Badge
+                  bg="danger"
+                  style={{ position: 'absolute', left: 0, top: 0 }}
+                >
+                  -{discount}%
+                </Badge>
+              )}
+            </>
           )}
-          <Card.Text style={{ padding: '5px 0' }}>
-            <SizesInfo url={url} isCompact={isCompact} />
-          </Card.Text>
-        </Card>
-      </div>
+        </div>
+        {!isCompact && (
+          <ListGroup className="list-group-flush">
+            <Card.Text style={{ margin: '5px 0' }}>
+              <span style={{ marginBottom: 0 }}>{title}</span>
+              <br />
+              <span>{sku}</span>
+            </Card.Text>
+            <Card.Text>{renderPrices(prices)}</Card.Text>
+          </ListGroup>
+        )}
+        <Card.Text style={{ padding: '5px 0' }}>
+          <SizesInfo url={url} isCompact={isCompact} />
+        </Card.Text>
+      </Card>
     </Col>
   );
 };
