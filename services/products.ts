@@ -92,7 +92,7 @@ export default class ProductsService {
         const figcaptionRegex = /<figcaption.*>(.*?)<\/figcaption>/;
         const figcaption = articleMatch.match(figcaptionRegex)?.[0];
 
-        products.push({ sku, url, imageUrl, prices, title });
+        products.push({ sku, url, imageUrl, prices, title, id: sku });
       }
     });
 

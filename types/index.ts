@@ -1,6 +1,7 @@
 type Price = { currency: string; value: number };
 
 export type ProductData = {
+  id: string;
   sku: string;
   url: string;
   imageUrl: string;

@@ -18,16 +18,21 @@ const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
     setLocalValue(value);
   }, [value]);
 
+  const onKeyDown = (e: React.KeyboardEvent<FormElement<'indexInput'>>) => {
+    if (e.code === 'Enter') onIndexChange(e);
+  }
+
   const onIndexChange = (
     e: React.SyntheticEvent<FormElement<'indexInput'>>
   ) => {
     e.preventDefault();
     const newValue = Number(e.currentTarget.indexInput.value);
+    console.log(e)
     onSubmit(newValue);
   };
 
   return (
-    <Form onSubmit={onIndexChange} style={style}>
+    <Form style={style} onKeyDown={onKeyDown}>
       <Form.Control
         id="indexInput"
         type="number"

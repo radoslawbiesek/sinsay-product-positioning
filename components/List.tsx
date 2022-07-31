@@ -1,6 +1,19 @@
 import * as React from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
 
 import { Container, Col, Row } from 'react-bootstrap';
 
@@ -15,24 +28,29 @@ type ListProps = {
 };
 
 const List = ({ list }: ListProps) => {
-  const [localList, setLocalList] = React.useState<ProductData[]>([]);
-
-  React.useEffect(() => {
-    if (list) {
-      setLocalList(list);
-    }
-  }, [list]);
-
+  const [localList, setLocalList] = React.useState(list);
   const [itemsPerRow, setItemsPerRow] = React.useState(4);
 
-  const move = React.useCallback((dragIndex: number, hoverIndex: number) => {
-    setLocalList((list) => {
-      const copy = [...list];
-      const itemToMove = copy.splice(dragIndex, 1)[0];
-      copy.splice(hoverIndex, 0, itemToMove);
-      return copy;
-    });
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const move = React.useCallback((oldIndex: number, newIndex: number) => {
+    setLocalList((list) => arrayMove(list, oldIndex, newIndex));
   }, []);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = localList.findIndex((product) => product.id === active.id);
+    const newIndex = localList.findIndex((product) => product.id === over.id);
+
+    move(oldIndex, newIndex);
+  }
 
   return (
     <div>
@@ -46,28 +64,33 @@ const List = ({ list }: ListProps) => {
             <Aside list={localList} />
           </Col>
           <Col xs="10">
-            <DndProvider backend={HTML5Backend}>
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'stretch',
-                }}
-              >
-                {localList?.map((product, index) => (
-                  <Col xs={12 / itemsPerRow} key={product.sku}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={localList} strategy={rectSortingStrategy}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                  }}
+                >
+                  {localList.map((product, index) => (
                     <Product
+                      key={product.sku}
                       id={product.sku}
                       product={product}
                       listLen={localList.length}
+                      itemsPerRow={itemsPerRow}
                       index={index}
                       move={move}
-                      isCompact={itemsPerRow === 12}
                     />
-                  </Col>
-                ))}
-              </div>
-            </DndProvider>
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           </Col>
         </Row>
       </Container>
