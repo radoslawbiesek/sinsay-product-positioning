@@ -7,8 +7,6 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -32,7 +30,6 @@ type ListProps = {
 const List = ({ list }: ListProps) => {
   const [localList, setLocalList] = React.useState(list);
   const [itemsPerRow, setItemsPerRow] = React.useState(4);
-  const [activeId, setActiveId] = React.useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -45,10 +42,6 @@ const List = ({ list }: ListProps) => {
     setLocalList((list) => arrayMove(list, oldIndex, newIndex));
   }, []);
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -57,11 +50,6 @@ const List = ({ list }: ListProps) => {
     const newIndex = localList.findIndex((product) => product.id === over.id);
 
     move(oldIndex, newIndex);
-    setActiveId('');
-  };
-
-  const handleDragCancel = () => {
-    setActiveId('');
   };
 
   return (
@@ -79,9 +67,7 @@ const List = ({ list }: ListProps) => {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
-              onDragCancel={handleDragCancel}
             >
               <SortableContext items={localList} strategy={rectSortingStrategy}>
                 <div
@@ -102,15 +88,6 @@ const List = ({ list }: ListProps) => {
                   ))}
                 </div>
               </SortableContext>
-              <DragOverlay>
-                <Product
-                  listLen={localList.length}
-                  itemsPerRow={1}
-                  index={localList.findIndex((p) => p.id === activeId)}
-                  move={move}
-                  {...(localList.find((p) => p.id === activeId) as ProductData)}
-                />
-              </DragOverlay>
             </DndContext>
           </Col>
         </Row>

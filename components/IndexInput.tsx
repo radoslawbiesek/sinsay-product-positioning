@@ -19,6 +19,7 @@ const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
   }, [value]);
 
   const onKeyDown = (e: React.KeyboardEvent<FormElement<'indexInput'>>) => {
+    e.stopPropagation();
     if (e.code === 'Enter') onIndexChange(e);
   };
 

@@ -77,11 +77,7 @@ const Product = ({
     >
       <Card style={{ textAlign: 'center', margin: '10px' }}>
         <div style={{ position: 'relative' }}>
-          <Card.Img
-            src={imageUrl}
-            style={{ cursor: 'pointer' }}
-            onClick={() => window.open(url, '_blank')}
-          />
+          <Card.Img src={imageUrl} />
           {!isCompact && (
             <>
               <IndexInput
@@ -109,7 +105,7 @@ const Product = ({
         {!isCompact && (
           <ListGroup className="list-group-flush">
             <Card.Text style={{ margin: '5px 0' }}>
-              <span style={{ marginBottom: 0 }}>{title}</span>
+              <a href={url} target="_blank" rel="noreferrer">{title}</a>
               <br />
               <span>{sku}</span>
             </Card.Text>
@@ -120,7 +116,7 @@ const Product = ({
           <SizesInfo url={url} isCompact={isCompact} />
         </Card.Text>
       </Card>
-    </Col>
+    </Col >
   );
 };
 
