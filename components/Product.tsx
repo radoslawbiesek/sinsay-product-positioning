@@ -68,7 +68,13 @@ const Product = ({
   };
 
   return (
-    <Col xs={12 / itemsPerRow} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <Col
+      xs={12 / itemsPerRow}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
       <div>
         <Card style={{ textAlign: 'center', margin: '10px' }}>
           <div style={{ position: 'relative' }}>
@@ -116,7 +122,7 @@ const Product = ({
           </Card.Text>
         </Card>
       </div>
-    </Col >
+    </Col>
   );
 };
 

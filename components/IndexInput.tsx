@@ -20,14 +20,13 @@ const IndexInput = ({ value, onSubmit, maxValue, style }: IndexInputProps) => {
 
   const onKeyDown = (e: React.KeyboardEvent<FormElement<'indexInput'>>) => {
     if (e.code === 'Enter') onIndexChange(e);
-  }
+  };
 
   const onIndexChange = (
     e: React.SyntheticEvent<FormElement<'indexInput'>>
   ) => {
     e.preventDefault();
     const newValue = Number(e.currentTarget.indexInput.value);
-    console.log(e)
     onSubmit(newValue);
   };
 
