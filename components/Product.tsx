@@ -69,7 +69,7 @@ const Product = ({
           {discount > 0 && (
             <Badge
               bg="danger"
-              style={{ position: 'absolute', right: 0, bottom: 0 }}
+              style={{ position: 'absolute', left: 0, top: 0 }}
             >
               -{discount}%
             </Badge>
@@ -77,7 +77,8 @@ const Product = ({
         </div>
         <ListGroup className="list-group-flush">
           <Card.Text style={{ margin: '5px 0' }}>
-            <span style={{ marginBottom: 0 }}>{title}</span><br />
+            <span style={{ marginBottom: 0 }}>{title}</span>
+            <br />
             <span>{sku}</span>
           </Card.Text>
           <Card.Text>{renderPrices(prices)}</Card.Text>
@@ -86,7 +87,7 @@ const Product = ({
           <SizesInfo url={url} />
         </Card.Text>
       </Card>
-    </DragItem >
+    </DragItem>
   );
 };
 

@@ -47,19 +47,24 @@ const List = ({ list }: ListProps) => {
           </Col>
           <Col xs="10">
             <DndProvider backend={HTML5Backend}>
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {localList.length > 0 &&
-                  localList.map((product, index) => (
-                    <Col xs={12 / itemsPerRow} key={product.sku}>
-                      <Product
-                        id={product.sku}
-                        product={product}
-                        listLen={localList.length}
-                        index={index}
-                        move={move}
-                      />
-                    </Col>
-                  ))}
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'stretch',
+                }}
+              >
+                {localList?.map((product, index) => (
+                  <Col xs={12 / itemsPerRow} key={product.sku}>
+                    <Product
+                      id={product.sku}
+                      product={product}
+                      listLen={localList.length}
+                      index={index}
+                      move={move}
+                    />
+                  </Col>
+                ))}
               </div>
             </DndProvider>
           </Col>

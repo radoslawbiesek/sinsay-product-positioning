@@ -25,19 +25,21 @@ const SizesInfo = ({ url }: SizesInfoProps) => {
   if (state.status === 'resolved') {
     return (
       <>
-        {state.data.isLowStock && <><Badge bg="danger">OSTATNIE SZTUKI</Badge><br /></>}
-        {
-          state.data.sizes.map((size) => (
-            <Badge
-              key={size}
-              bg="light"
-              text="secondary"
-              style={{ marginRight: 3 }}
-            >
-              {size}
-            </Badge>
-          ))
-        }
+        {state.data.isLowStock && (
+          <Badge bg="danger" style={{ marginRight: 10 }}>
+            OSTATNIE SZTUKI
+          </Badge>
+        )}
+        {state.data.sizes.map((size) => (
+          <Badge
+            key={size}
+            bg="light"
+            text="secondary"
+            style={{ marginRight: 3 }}
+          >
+            {size}
+          </Badge>
+        ))}
       </>
     );
   }

@@ -33,7 +33,7 @@ const Home: NextPage = () => {
             <Spinner animation="border" variant="dark" />
           </div>
         )}
-        {state.status === 'resolved' && < List list={state.data} />}
+        {state.status === 'resolved' && <List list={state.data} />}
       </>
     </div>
   );
