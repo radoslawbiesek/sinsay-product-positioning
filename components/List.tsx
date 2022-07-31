@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -28,7 +27,7 @@ const List = ({ list }: ListProps) => {
 
   const move = React.useCallback((dragIndex: number, hoverIndex: number) => {
     setLocalList((list) => {
-      const copy = _.cloneDeep(list);
+      const copy = [...list];
       const itemToMove = copy.splice(dragIndex, 1)[0];
       copy.splice(hoverIndex, 0, itemToMove);
       return copy;
