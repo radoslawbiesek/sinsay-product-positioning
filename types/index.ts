@@ -6,7 +6,9 @@ export type ProductData = {
   url: string;
   imageUrl: string;
   title: string;
-  prices: Price[];
+  currentPrice: number;
+  regularPrice: number;
+  currency: string;
 };
 
 export type ProductDetails = {

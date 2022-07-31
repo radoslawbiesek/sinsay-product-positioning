@@ -23,8 +23,10 @@ const Product = React.memo(
     sku,
     imageUrl,
     title,
-    prices,
     url,
+    currentPrice,
+    regularPrice,
+    currency,
     index,
     move,
     itemsPerRow,
@@ -33,33 +35,31 @@ const Product = React.memo(
     const isCompact = itemsPerRow === 12;
 
     let discount: number;
-    if (prices.length === 2) {
-      discount = 100 - Math.ceil((prices[0].value / prices[1].value) * 100);
+    const isDiscount = regularPrice !== 0;
+    if (isDiscount) {
+      discount = 100 - Math.ceil((currentPrice / regularPrice) * 100);
     } else {
       discount = 0;
     }
 
-    const renderPrices = (prices: ProductData['prices']) => {
-      if (prices.length === 2) {
-        const currentPrice = prices[0];
-        const regularPrice = prices[1];
+    const renderPrices = () => {
+      if (isDiscount) {
         return (
           <>
             <span style={{ fontSize: '1.2rem' }} className="text-danger">
-              {currentPrice.value}{' '}
+              {currentPrice}{' '}
             </span>
             <span style={{ textDecoration: 'line-through' }}>
-              {regularPrice.value}{' '}
+              {regularPrice}{' '}
             </span>
-            <span>{currentPrice.currency}</span>
+            <span>{currency}</span>
           </>
         );
       }
 
-      const price = prices[0];
       return (
         <span>
-          {price.value} {price.currency}
+          {currentPrice} {currency}
         </span>
       );
     };
@@ -111,7 +111,7 @@ const Product = React.memo(
                 <br />
                 <span>{sku}</span>
               </Card.Text>
-              <Card.Text>{renderPrices(prices)}</Card.Text>
+              <Card.Text>{renderPrices()}</Card.Text>
             </ListGroup>
           )}
           <Card.Text style={{ padding: '5px 0' }}>
@@ -122,7 +122,6 @@ const Product = React.memo(
     );
   }
 );
-
 Product.displayName = 'Product';
 
 export default Product;

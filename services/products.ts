@@ -77,22 +77,36 @@ export default class ProductsService {
           /<sectionclass="es-product-price">(.*?)<\/section>/;
         const pricesSection = articleMatch.match(pricesSectionRegex)?.[1];
 
-        let prices: ProductData['prices'] = [];
+        let regularPrice = 0;
+        let currentPrice = 0;
+        let currency = '';
         if (pricesSection) {
           const priceRegex = /<span>(.*?)<\/span>/g;
           const pricesMatches = pricesSection.matchAll(priceRegex);
-          [...pricesMatches].forEach((priceMatch) => {
-            const [strValue, currency] = priceMatch[1].split('&nbsp;');
+          [...pricesMatches].forEach((priceMatch, index) => {
+            const [strValue, matchCurrency] = priceMatch[1].split('&nbsp;');
             const value = parseFloat(strValue.replace(',', '.'));
+            if (index === 0) {
+              currency = matchCurrency;
+              currentPrice = value;
+            }
 
-            prices.push({ value, currency });
+            if (index === 1) {
+              regularPrice = value;
+            }
           });
         }
 
-        const figcaptionRegex = /<figcaption.*>(.*?)<\/figcaption>/;
-        const figcaption = articleMatch.match(figcaptionRegex)?.[0];
-
-        products.push({ sku, url, imageUrl, prices, title, id: sku });
+        products.push({
+          sku,
+          url,
+          imageUrl,
+          title,
+          id: sku,
+          regularPrice,
+          currentPrice,
+          currency,
+        });
       }
     });
 
