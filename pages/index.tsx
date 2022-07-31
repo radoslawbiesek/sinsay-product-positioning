@@ -15,6 +15,7 @@ const Home: NextPage = () => {
   const { execute, state } = useFetch(ProductsService.getProductsList);
 
   React.useEffect(() => {
+    if (!url) return;
     execute(url);
   }, [url, execute]);
 

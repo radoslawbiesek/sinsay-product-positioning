@@ -22,7 +22,9 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
   }
 }
 
-function useFetch<T>(fetcher: (url: string) => Promise<T>) {
+function useFetch<T, U extends unknown[]>(
+  fetcher: (...args: [...U]) => Promise<T>
+) {
   const [state, dispatch] = React.useReducer<
     React.Reducer<State<T>, Action<T>>
   >(reducer, {
@@ -32,10 +34,10 @@ function useFetch<T>(fetcher: (url: string) => Promise<T>) {
   });
 
   const execute = React.useCallback(
-    async (url: string) => {
+    async (...args: [...U]) => {
       dispatch({ type: 'start' });
       try {
-        const result = await fetcher(url);
+        const result = await fetcher(...args);
         dispatch({ type: 'success', payload: result });
       } catch {
         dispatch({ type: 'error' });
