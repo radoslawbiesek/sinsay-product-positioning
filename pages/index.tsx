@@ -9,6 +9,25 @@ import List from '../components/List';
 
 import ProductsService from '../services/products';
 import { ProductData } from '../types';
+import HttpError from '../utils/HttpError';
+
+function getErrorMessage(error: unknown): string {
+  const baseMsg = 'Nie udało się pobrać wyników.';
+  if (error instanceof HttpError) {
+    switch (error.statusCode) {
+      case 404:
+        return '404: Nie znaleziono strony';
+      default:
+        return `${baseMsg}. Kod błędu: ${error.statusCode}`;
+    }
+  } else if (error instanceof Error) {
+    if (error.message) {
+      return `${baseMsg}. Błąd: ${error.message}`;
+    }
+  }
+
+  return baseMsg;
+}
 
 const Home: NextPage = () => {
   const [url, setUrl] = React.useState('');
@@ -29,12 +48,8 @@ const Home: NextPage = () => {
       <Form onSubmit={setUrl} />
       {url && (
         <>
-          {error && (
-            <Alert variant="danger">
-              Nie udało się załadować wyników. Spróbuj ponownie.
-            </Alert>
-          )}
-          {!data && (
+          {error && <Alert variant="danger">{getErrorMessage(error)}</Alert>}
+          {!data && !error && (
             <div style={{ textAlign: 'center' }}>
               <Spinner animation="border" variant="dark" />
             </div>

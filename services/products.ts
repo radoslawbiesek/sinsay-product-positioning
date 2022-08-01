@@ -1,4 +1,5 @@
 import { ProductData, ProductDetails } from '../types';
+import HttpError from '../utils/HttpError';
 
 type FetchedProduct = {
   sizes: {
@@ -21,17 +22,23 @@ function getTitleFromSlug(url: string) {
   return slugArr.join(' ');
 }
 
-async function getPage(url: string): Promise<string> {
-  try {
-    const response = await fetch(url);
-    if (response.status !== 200) throw new Error(`${response.status}`);
-
-    const text = await response.text();
-    return text.replace(/\s/g, '');
-  } catch (err) {
-    console.error(err);
-    throw new Error(err instanceof Error ? err.message : '');
+function handleError(error: unknown): never {
+  console.log(error);
+  if (error instanceof HttpError) {
+    throw new HttpError(error.statusCode);
+  } else if (error instanceof Error) {
+    throw new Error(error instanceof Error ? error.message : '');
   }
+
+  throw new Error();
+}
+
+async function getPage(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (response.status !== 200) throw new HttpError(response.status);
+
+  const text = await response.text();
+  return text.replace(/\s/g, '');
 }
 
 async function getProductDetails(url: string): Promise<ProductDetails> {
@@ -63,8 +70,7 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
 
     return { sizes, isLowStock };
   } catch (err) {
-    console.error(err);
-    throw new Error(err instanceof Error ? err.message : '');
+    handleError(err);
   }
 }
 
@@ -94,6 +100,7 @@ async function getProductsList(url: string): Promise<ProductData[]> {
 
         let regularPrice = 0;
         let currentPrice = 0;
+
         let currency = '';
         if (pricesSection) {
           const priceRegex = /<span>(.*?)<\/span>/g;
@@ -127,8 +134,7 @@ async function getProductsList(url: string): Promise<ProductData[]> {
 
     return products;
   } catch (err) {
-    console.error(err);
-    throw Error(err instanceof Error ? err.message : '');
+    handleError(err);
   }
 }
 
