@@ -12,19 +12,31 @@ type FetchedProduct = {
   };
 };
 
-export default class ProductsService {
-  private static getPage = async (url: string): Promise<string> => {
+function getTitleFromSlug(url: string) {
+  const slugArr = url.split('-').slice(0, -2);
+  const urlArr = slugArr[0].split('/');
+  const firstPart = urlArr[urlArr.length - 1];
+  slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
+
+  return slugArr.join(' ');
+}
+
+async function getPage(url: string): Promise<string> {
+  try {
     const response = await fetch(url);
     if (response.status !== 200) throw new Error(`${response.status}`);
 
     const text = await response.text();
     return text.replace(/\s/g, '');
-  };
+  } catch (err) {
+    console.error(err);
+    throw new Error(err instanceof Error ? err.message : '');
+  }
+}
 
-  public static getProductDetails = async (
-    url: string
-  ): Promise<ProductDetails> => {
-    const text = await this.getPage(url);
+async function getProductDetails(url: string): Promise<ProductDetails> {
+  try {
+    const text = await getPage(url);
 
     const fnRegex = /window\['getProductData'\]=(.*?)window/;
     const fnStr = fnRegex.exec(text);
@@ -50,12 +62,15 @@ export default class ProductsService {
     }
 
     return { sizes, isLowStock };
-  };
+  } catch (err) {
+    console.error(err);
+    throw new Error(err instanceof Error ? err.message : '');
+  }
+}
 
-  public static getProductsList = async (
-    url: string
-  ): Promise<ProductData[]> => {
-    const text = await this.getPage(url);
+async function getProductsList(url: string): Promise<ProductData[]> {
+  try {
+    const text = await getPage(url);
 
     const articleRegex = /\<article(.*?)\<\/article>/g;
 
@@ -111,14 +126,12 @@ export default class ProductsService {
     });
 
     return products;
-  };
+  } catch (err) {
+    console.error(err);
+    throw Error(err instanceof Error ? err.message : '');
+  }
 }
 
-function getTitleFromSlug(url: string) {
-  const slugArr = url.split('-').slice(0, -2);
-  const urlArr = slugArr[0].split('/');
-  const firstPart = urlArr[urlArr.length - 1];
-  slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
+const ProductsService = { getProductDetails, getProductsList };
 
-  return slugArr.join(' ');
-}
+export default ProductsService;

@@ -20,6 +20,7 @@ const Home: NextPage = () => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
+      errorRetryCount: 5,
     }
   );
 
