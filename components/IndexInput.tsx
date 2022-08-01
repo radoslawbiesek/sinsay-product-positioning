@@ -11,10 +11,10 @@ type IndexInputProps = {
 };
 
 const IndexInput = ({ value, onSubmit, style }: IndexInputProps) => {
-  const [localValue, setLocalValue] = React.useState(value);
+  const [localValue, setLocalValue] = React.useState(value.toString());
 
   React.useEffect(() => {
-    setLocalValue(value);
+    setLocalValue(value.toString());
   }, [value]);
 
   const onKeyDown = (e: React.KeyboardEvent<FormElement<'indexInput'>>) => {
@@ -26,8 +26,9 @@ const IndexInput = ({ value, onSubmit, style }: IndexInputProps) => {
     e: React.SyntheticEvent<FormElement<'indexInput'>>
   ) => {
     e.preventDefault();
-    const newValue = Number(e.currentTarget.indexInput.value);
-    onSubmit(newValue);
+    const newValue = e.currentTarget.indexInput.value;
+    if (!newValue) return;
+    onSubmit(Number(newValue));
   };
 
   return (
@@ -37,7 +38,8 @@ const IndexInput = ({ value, onSubmit, style }: IndexInputProps) => {
         type="number"
         min={1}
         value={localValue}
-        onChange={(e) => setLocalValue(+e.target.value)}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={() => setLocalValue(value.toString())}
       />
     </Form>
   );
