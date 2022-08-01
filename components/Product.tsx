@@ -115,6 +115,17 @@ const Product = React.memo(
             </ListGroup>
           )}
           <Card.Text style={{ padding: '5px 0' }}>
+            {isCompact && (
+              <>
+                <strong style={{ fontSize: 12, margin: '3px 0' }}>
+                  {currentPrice.toString().split('.')[0]}
+                  <div style={{ display: 'inline-block', fontSize: '0.8em', transform: 'translate(0, -0.4em)' }}>
+                    {currentPrice.toString().split('.')[1]}
+                  </div>{' '}
+                </strong>
+                <span style={{ fontSize: 10 }}>{currency}</span>
+              </>
+            )}
             <SizesInfo url={url} isCompact={isCompact} />
           </Card.Text>
         </Card>
