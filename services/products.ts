@@ -1,5 +1,7 @@
-import { ProductData, ProductDetails } from "../types";
-import HttpError from "../utils/HttpError";
+import { ProductData, ProductDetails } from '../types';
+import HttpError from '../utils/HttpError';
+
+import { v4 as uuidv4 } from 'uuid';
 
 type FetchedProduct = {
   sizes: {
@@ -15,12 +17,12 @@ type FetchedProduct = {
 };
 
 function getTitleFromSlug(url: string) {
-  const slugArr = url.split("-").slice(0, -2);
-  const urlArr = slugArr[0].split("/");
+  const slugArr = url.split('-').slice(0, -2);
+  const urlArr = slugArr[0].split('/');
   const firstPart = urlArr[urlArr.length - 1];
   slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
 
-  return slugArr.join(" ");
+  return slugArr.join(' ');
 }
 
 function handleError(error: unknown): never {
@@ -28,7 +30,7 @@ function handleError(error: unknown): never {
   if (error instanceof HttpError) {
     throw new HttpError(error.statusCode);
   } else if (error instanceof Error) {
-    throw new Error(error instanceof Error ? error.message : "");
+    throw new Error(error instanceof Error ? error.message : '');
   }
 
   throw new Error();
@@ -39,7 +41,7 @@ async function getPage(url: string): Promise<string> {
   if (response.status !== 200) throw new HttpError(response.status);
 
   const text = await response.text();
-  return text.replace(/\s/g, "");
+  return text.replace(/\s/g, '');
 }
 
 async function getProductDetails(url: string): Promise<ProductDetails> {
@@ -49,7 +51,7 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
     const fnRegex = /window\['getProductData'\]=(.*?)window/;
     const fnStr = fnRegex.exec(text);
     let sizes: string[] = [];
-    let isLowStock = false;
+    let isLowInStock = false;
 
     if (fnStr) {
       let getProductData = () => ({} as FetchedProduct);
@@ -64,15 +66,15 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
         []
       );
 
-      const LABELS = ["ostatniesztuki", "lowinstock"];
+      const LABELS = ['ostatniesztuki', 'lowinstock'];
       const LOW_IN_STOCK_ID = 3783;
-      isLowStock = flatStickers.some(
+      isLowInStock = flatStickers.some(
         ({ text, stickerId }) =>
           LABELS.includes(text.toLowerCase()) || stickerId === LOW_IN_STOCK_ID
       );
     }
 
-    return { sizes, isLowStock };
+    return { sizes, isLowInStock };
   } catch (err) {
     handleError(err);
   }
@@ -89,14 +91,14 @@ async function getProductsList(url: string): Promise<ProductData[]> {
       if (article[1]) {
         const articleMatch = article[1];
         const skuRegex = /data-sku="(.*?)"/;
-        const sku = articleMatch.match(skuRegex)?.[1] || "";
+        const sku = articleMatch.match(skuRegex)?.[1] || '';
 
         const urlRegex = /<ahref="(.*?)"/;
-        const url = articleMatch.match(urlRegex)?.[1] || "";
+        const url = articleMatch.match(urlRegex)?.[1] || '';
         const title = getTitleFromSlug(url);
 
         const imageUrlRegex = /data-src="(.*?)"/;
-        const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || "";
+        const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || '';
 
         const pricesSectionRegex =
           /<sectionclass="es-product-price">(.*?)<\/section>/;
@@ -105,13 +107,13 @@ async function getProductsList(url: string): Promise<ProductData[]> {
         let regularPrice = 0;
         let currentPrice = 0;
 
-        let currency = "";
+        let currency = '';
         if (pricesSection) {
           const priceRegex = /<span>(.*?)<\/span>/g;
           const pricesMatches = pricesSection.matchAll(priceRegex);
           [...pricesMatches].forEach((priceMatch, index) => {
-            const [strValue, matchCurrency] = priceMatch[1].split("&nbsp;");
-            const value = parseFloat(strValue.replace(",", "."));
+            const [strValue, matchCurrency] = priceMatch[1].split('&nbsp;');
+            const value = parseFloat(strValue.replace(',', '.'));
             if (index === 0) {
               currency = matchCurrency;
               currentPrice = value;
@@ -124,11 +126,11 @@ async function getProductsList(url: string): Promise<ProductData[]> {
         }
 
         products.push({
+          id: uuidv4(),
           sku,
           url,
           imageUrl,
           title,
-          id: sku,
           regularPrice,
           currentPrice,
           currency,

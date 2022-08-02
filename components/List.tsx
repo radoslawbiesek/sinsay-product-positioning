@@ -91,7 +91,7 @@ const List = ({ list }: ListProps) => {
                 >
                   {localList.map((product, index) => (
                     <Product
-                      key={product.sku}
+                      key={product.id}
                       itemsPerRow={itemsPerRow}
                       index={index}
                       move={move}

@@ -13,7 +13,7 @@ export type ProductData = {
 
 export type ProductDetails = {
   sizes: string[];
-  isLowStock: boolean;
+  isLowInStock: boolean;
 };
 
 export type FormElement<T extends string> = HTMLFormElement & {

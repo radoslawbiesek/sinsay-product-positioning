@@ -12,15 +12,15 @@ const Aside = ({ list }: AsideProps) => {
   const [showTooltip, setShowTooltip] = React.useState(false);
   const target = React.useRef(null);
 
-  const skuList = list.map((product) => product.sku);
-
   const onClick = () => {
-    navigator.clipboard.writeText(skuList.join('\n')).then(() => {
-      setShowTooltip(true);
-      setTimeout(() => {
-        setShowTooltip(false);
-      }, 3000);
-    });
+    navigator.clipboard
+      .writeText(list.map((product) => product.sku).join('\n'))
+      .then(() => {
+        setShowTooltip(true);
+        setTimeout(() => {
+          setShowTooltip(false);
+        }, 3000);
+      });
   };
 
   return (
@@ -40,9 +40,9 @@ const Aside = ({ list }: AsideProps) => {
           </Tooltip>
         )}
       </Overlay>
-      {skuList.map((sku) => (
-        <p style={{ margin: '5px 0' }} key={sku}>
-          {sku}
+      {list.map((product) => (
+        <p style={{ margin: '5px 0' }} key={product.id}>
+          {product.sku}
         </p>
       ))}
     </aside>

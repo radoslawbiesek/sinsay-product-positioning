@@ -37,7 +37,7 @@ const SizesInfo = React.memo(({ url, isCompact }: SizesInfoProps) => {
   if (data) {
     return (
       <>
-        {data.isLowStock && (
+        {data.isLowInStock && (
           <Badge bg="secondary" style={{ marginRight: 10 }}>
             {isCompact ? 'ost.' : 'OSTATNIE SZTUKI'}
           </Badge>
@@ -53,7 +53,7 @@ const SizesInfo = React.memo(({ url, isCompact }: SizesInfoProps) => {
                 {size}
               </Badge>
             ))
-          : !data.isLowStock && (
+          : !data.isLowInStock && (
               <Badge bg="light" text="dark">
                 {data.sizes.length} r.
               </Badge>

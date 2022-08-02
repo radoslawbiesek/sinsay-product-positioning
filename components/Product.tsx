@@ -119,7 +119,13 @@ const Product = React.memo(
               <>
                 <strong style={{ fontSize: 12, margin: '3px 0' }}>
                   {currentPrice.toString().split('.')[0]}
-                  <div style={{ display: 'inline-block', fontSize: '0.8em', transform: 'translate(0, -0.4em)' }}>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      fontSize: '0.8em',
+                      transform: 'translate(0, -0.4em)',
+                    }}
+                  >
                     {currentPrice.toString().split('.')[1]}
                   </div>{' '}
                 </strong>
