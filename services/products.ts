@@ -1,5 +1,5 @@
-import { ProductData, ProductDetails } from '../types';
-import HttpError from '../utils/HttpError';
+import { ProductData, ProductDetails } from "../types";
+import HttpError from "../utils/HttpError";
 
 type FetchedProduct = {
   sizes: {
@@ -9,17 +9,18 @@ type FetchedProduct = {
   stickers: {
     [key: string]: {
       text: string;
+      stickerId: number;
     }[];
   };
 };
 
 function getTitleFromSlug(url: string) {
-  const slugArr = url.split('-').slice(0, -2);
-  const urlArr = slugArr[0].split('/');
+  const slugArr = url.split("-").slice(0, -2);
+  const urlArr = slugArr[0].split("/");
   const firstPart = urlArr[urlArr.length - 1];
   slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
 
-  return slugArr.join(' ');
+  return slugArr.join(" ");
 }
 
 function handleError(error: unknown): never {
@@ -27,7 +28,7 @@ function handleError(error: unknown): never {
   if (error instanceof HttpError) {
     throw new HttpError(error.statusCode);
   } else if (error instanceof Error) {
-    throw new Error(error instanceof Error ? error.message : '');
+    throw new Error(error instanceof Error ? error.message : "");
   }
 
   throw new Error();
@@ -38,7 +39,7 @@ async function getPage(url: string): Promise<string> {
   if (response.status !== 200) throw new HttpError(response.status);
 
   const text = await response.text();
-  return text.replace(/\s/g, '');
+  return text.replace(/\s/g, "");
 }
 
 async function getProductDetails(url: string): Promise<ProductDetails> {
@@ -63,9 +64,12 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
         []
       );
 
-      isLowStock = flatStickers
-        .map(({ text }) => text)
-        .includes('OSTATNIESZTUKI');
+      const LABELS = ["ostatniesztuki", "lowinstock"];
+      const LOW_IN_STOCK_ID = 3783;
+      isLowStock = flatStickers.some(
+        ({ text, stickerId }) =>
+          LABELS.includes(text.toLowerCase()) || stickerId === LOW_IN_STOCK_ID
+      );
     }
 
     return { sizes, isLowStock };
@@ -85,14 +89,14 @@ async function getProductsList(url: string): Promise<ProductData[]> {
       if (article[1]) {
         const articleMatch = article[1];
         const skuRegex = /data-sku="(.*?)"/;
-        const sku = articleMatch.match(skuRegex)?.[1] || '';
+        const sku = articleMatch.match(skuRegex)?.[1] || "";
 
         const urlRegex = /<ahref="(.*?)"/;
-        const url = articleMatch.match(urlRegex)?.[1] || '';
+        const url = articleMatch.match(urlRegex)?.[1] || "";
         const title = getTitleFromSlug(url);
 
         const imageUrlRegex = /data-src="(.*?)"/;
-        const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || '';
+        const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || "";
 
         const pricesSectionRegex =
           /<sectionclass="es-product-price">(.*?)<\/section>/;
@@ -101,13 +105,13 @@ async function getProductsList(url: string): Promise<ProductData[]> {
         let regularPrice = 0;
         let currentPrice = 0;
 
-        let currency = '';
+        let currency = "";
         if (pricesSection) {
           const priceRegex = /<span>(.*?)<\/span>/g;
           const pricesMatches = pricesSection.matchAll(priceRegex);
           [...pricesMatches].forEach((priceMatch, index) => {
-            const [strValue, matchCurrency] = priceMatch[1].split('&nbsp;');
-            const value = parseFloat(strValue.replace(',', '.'));
+            const [strValue, matchCurrency] = priceMatch[1].split("&nbsp;");
+            const value = parseFloat(strValue.replace(",", "."));
             if (index === 0) {
               currency = matchCurrency;
               currentPrice = value;
