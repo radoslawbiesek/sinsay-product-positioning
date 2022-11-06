@@ -1,4 +1,5 @@
 import * as React from 'react';
+import useSWR from 'swr';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -6,7 +7,9 @@ import { Card, Badge, ListGroup, Col } from 'react-bootstrap';
 
 import SizesInfo from './SizesInfo';
 import IndexInput from './IndexInput';
-import { ProductData } from '../types';
+import ProductsService from '../services/products';
+import { ProductData, ProductDetails } from '../types';
+import PriceInfo from './PriceInfo';
 
 const MAX_ITEMS = 12;
 
@@ -21,51 +24,34 @@ const Product = React.memo(
   ({
     id,
     sku,
-    imageUrl,
     title,
     url,
-    currentPrice,
-    regularPrice,
-    currency,
     index,
     move,
     itemsPerRow,
     overlay = false,
   }: ProductProps) => {
-    const isCompact = itemsPerRow === 12;
-
-    let discount: number;
-    const isDiscount = regularPrice !== 0;
-    if (isDiscount) {
-      discount = 100 - Math.ceil((currentPrice / regularPrice) * 100);
-    } else {
-      discount = 0;
-    }
-
-    const renderPrices = () => {
-      if (isDiscount) {
-        return (
-          <>
-            <span style={{ fontSize: '1.2rem' }} className="text-danger">
-              {currentPrice}{' '}
-            </span>
-            <span style={{ textDecoration: 'line-through' }}>
-              {regularPrice}{' '}
-            </span>
-            <span>{currency}</span>
-          </>
-        );
-      }
-
-      return (
-        <span>
-          {currentPrice} {currency}
-        </span>
-      );
-    };
-
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id });
+
+    const { data, error } = useSWR<ProductDetails>(
+      url,
+      ProductsService.getProductDetails,
+      {
+        revalidateIfStale: false,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+      }
+    );
+
+    if (error) return <p>{`Cannot load product ${title} (${sku})`}</p>;
+
+    if (!data) return <p>{`Loading product ${title} (${sku})`}</p>;
+
+    const isCompact = itemsPerRow === 12;
+
+    const discount =
+      100 - Math.ceil((data.currentPrice / data.regularPrice) * 100);
 
     return (
       <Col
@@ -78,7 +64,7 @@ const Product = React.memo(
       >
         <Card style={{ textAlign: 'center', margin: '10px' }}>
           <div style={{ position: 'relative' }}>
-            <Card.Img src={imageUrl} {...attributes} {...listeners} />
+            <Card.Img src={data.imageUrl} {...attributes} {...listeners} />
             <>
               {!isCompact && (
                 <IndexInput
@@ -111,14 +97,16 @@ const Product = React.memo(
                 <br />
                 <span>{sku}</span>
               </Card.Text>
-              <Card.Text>{renderPrices()}</Card.Text>
+              <Card.Text>
+                <PriceInfo data={data} />
+              </Card.Text>
             </ListGroup>
           )}
           <Card.Text style={{ padding: '5px 0' }}>
             {isCompact && (
               <>
                 <strong style={{ fontSize: 12, margin: '3px 0' }}>
-                  {currentPrice.toString().split('.')[0]}
+                  {data.currentPrice.toString().split('.')[0]}
                   <div
                     style={{
                       display: 'inline-block',
@@ -126,13 +114,13 @@ const Product = React.memo(
                       transform: 'translate(0, -0.4em)',
                     }}
                   >
-                    {currentPrice.toString().split('.')[1]}
+                    {data.currentPrice.toString().split('.')[1]}
                   </div>{' '}
                 </strong>
-                <span style={{ fontSize: 10 }}>{currency}</span>
+                <span style={{ fontSize: 10 }}>{data.currency}</span>
               </>
             )}
-            <SizesInfo url={url} isCompact={isCompact} />
+            <SizesInfo isCompact={isCompact} data={data} />
           </Card.Text>
         </Card>
       </Col>

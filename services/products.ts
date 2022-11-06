@@ -14,6 +14,14 @@ type FetchedProduct = {
       stickerId: number;
     }[];
   };
+  img: {
+    front: string;
+  };
+  price: {
+    regular: number;
+    final: number;
+    currency: string;
+  };
 };
 
 function getTitleFromSlug(url: string) {
@@ -50,14 +58,13 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
 
     const fnRegex = /window\['getProductData'\]=(.*?)window/;
     const fnStr = fnRegex.exec(text);
-    let sizes: string[] = [];
-    let isLowInStock = false;
 
     if (fnStr) {
       let getProductData = () => ({} as FetchedProduct);
       eval(`getProductData =  ${fnStr[1]}`);
       const productData = getProductData();
-      sizes = productData.sizes
+
+      const sizes = productData.sizes
         .filter((size) => size.stock)
         .map((size) => size.sizeName);
 
@@ -68,13 +75,22 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
 
       const LABELS = ['ostatniesztuki', 'lowinstock'];
       const LOW_IN_STOCK_ID = 3783;
-      isLowInStock = flatStickers.some(
+      const isLowInStock = flatStickers.some(
         ({ text, stickerId }) =>
           LABELS.includes(text.toLowerCase()) || stickerId === LOW_IN_STOCK_ID
       );
-    }
 
-    return { sizes, isLowInStock };
+      return {
+        sizes,
+        isLowInStock,
+        imageUrl: productData.img.front,
+        currentPrice: productData.price.final,
+        regularPrice: productData.price.regular,
+        currency: productData.price.currency,
+      };
+    } else {
+      throw new Error();
+    }
   } catch (err) {
     handleError(err);
   }
@@ -97,43 +113,11 @@ async function getProductsList(url: string): Promise<ProductData[]> {
         const url = articleMatch.match(urlRegex)?.[1] || '';
         const title = getTitleFromSlug(url);
 
-        const imageUrlRegex = /data-src="(.*?)"/;
-        const imageUrl = articleMatch.match(imageUrlRegex)?.[1] || '';
-
-        const pricesSectionRegex =
-          /<sectionclass="es-product-price">(.*?)<\/section>/;
-        const pricesSection = articleMatch.match(pricesSectionRegex)?.[1];
-
-        let regularPrice = 0;
-        let currentPrice = 0;
-
-        let currency = '';
-        if (pricesSection) {
-          const priceRegex = /<span>(.*?)<\/span>/g;
-          const pricesMatches = pricesSection.matchAll(priceRegex);
-          [...pricesMatches].forEach((priceMatch, index) => {
-            const [strValue, matchCurrency] = priceMatch[1].split('&nbsp;');
-            const value = parseFloat(strValue.replace(',', '.'));
-            if (index === 0) {
-              currency = matchCurrency;
-              currentPrice = value;
-            }
-
-            if (index === 1) {
-              regularPrice = value;
-            }
-          });
-        }
-
         products.push({
           id: uuidv4(),
           sku,
           url,
-          imageUrl,
           title,
-          regularPrice,
-          currentPrice,
-          currency,
         });
       }
     });
