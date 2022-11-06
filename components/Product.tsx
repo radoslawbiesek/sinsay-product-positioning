@@ -44,11 +44,41 @@ const Product = React.memo(
       }
     );
 
-    if (error) return <p>{`Cannot load product ${title} (${sku})`}</p>;
-
-    if (!data) return <p>{`Loading product ${title} (${sku})`}</p>;
-
     const isCompact = itemsPerRow === 12;
+
+
+    if (error || !data) {
+      return (
+        <Col
+          xs={overlay ? MAX_ITEMS : MAX_ITEMS / itemsPerRow}
+          ref={setNodeRef}
+          style={{
+            transform: CSS.Transform.toString(transform),
+            transition,
+          }}
+        >
+          <Card style={{ textAlign: 'center', margin: '10px' }}  {...attributes} {...listeners}>
+            {!isCompact && (
+              <IndexInput
+                onSubmit={(newValue) => move(index, newValue - 1)}
+                value={index + 1}
+                style={{
+                  marginLeft: 'auto',
+                  width: '80px',
+                }}
+              />
+            )}
+            <Card.Text style={{ margin: '5px 0' }}>
+              <span>{`${error ? 'Błąd ładowania' : 'Ładowanie'} produktu...`}</span>
+              <br />
+              <a href={url} target="_blank" rel="noreferrer">
+                {title}
+              </a>
+            </Card.Text>
+          </Card>
+        </Col>
+      );
+    }
 
     const discount =
       100 - Math.ceil((data.currentPrice / data.regularPrice) * 100);
