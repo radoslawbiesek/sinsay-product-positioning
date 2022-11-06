@@ -12,6 +12,7 @@ export type ProductDetails = {
   currentPrice: number;
   regularPrice: number;
   currency: string;
+  hasVideo: boolean;
 };
 
 export type FormElement<T extends string> = HTMLFormElement & {

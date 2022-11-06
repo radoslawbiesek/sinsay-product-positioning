@@ -46,7 +46,6 @@ const Product = React.memo(
 
     const isCompact = itemsPerRow === 12;
 
-
     if (error || !data) {
       return (
         <Col
@@ -57,7 +56,11 @@ const Product = React.memo(
             transition,
           }}
         >
-          <Card style={{ textAlign: 'center', margin: '10px' }}  {...attributes} {...listeners}>
+          <Card
+            style={{ textAlign: 'center', margin: '10px' }}
+            {...attributes}
+            {...listeners}
+          >
             {!isCompact && (
               <IndexInput
                 onSubmit={(newValue) => move(index, newValue - 1)}
@@ -69,7 +72,9 @@ const Product = React.memo(
               />
             )}
             <Card.Text style={{ margin: '5px 0' }}>
-              <span>{`${error ? 'Błąd ładowania' : 'Ładowanie'} produktu...`}</span>
+              <span>{`${
+                error ? 'Błąd ładowania' : 'Ładowanie'
+              } produktu...`}</span>
               <br />
               <a href={url} target="_blank" rel="noreferrer">
                 {title}
@@ -114,6 +119,18 @@ const Product = React.memo(
                   style={{ position: 'absolute', left: 0, top: 0 }}
                 >
                   {isCompact ? '%' : `-${discount}%`}
+                </Badge>
+              )}
+              {data.hasVideo && (
+                <Badge
+                  bg="info"
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: discount > 0 ? 12 : 0,
+                  }}
+                >
+                  Video
                 </Badge>
               )}
             </>

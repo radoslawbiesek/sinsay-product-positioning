@@ -22,6 +22,7 @@ type FetchedProduct = {
     final: number;
     currency: string;
   };
+  sku: string;
 };
 
 function getTitleFromSlug(url: string) {
@@ -80,6 +81,19 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
           LABELS.includes(text.toLowerCase()) || stickerId === LOW_IN_STOCK_ID
       );
 
+      let hasVideo = false;
+      const videoRegex = /window.videoConfig=(.*?);/;
+      const videoStr = videoRegex.exec(text);
+
+      if (videoStr) {
+        let videoArr = [] as any;
+        eval(`videoArr = ${videoStr[1]};`);
+
+        hasVideo = videoArr.some(
+          (obj: { sku: string }) => obj.sku === productData.sku
+        );
+      }
+
       return {
         sizes,
         isLowInStock,
@@ -87,6 +101,7 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
         currentPrice: productData.price.final,
         regularPrice: productData.price.regular,
         currency: productData.price.currency,
+        hasVideo,
       };
     } else {
       throw new Error();
