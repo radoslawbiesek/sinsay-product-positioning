@@ -113,26 +113,21 @@ const Product = React.memo(
                   }}
                 />
               )}
-              {discount > 0 && (
-                <Badge
-                  bg="danger"
-                  style={{ position: 'absolute', left: 0, top: 0 }}
-                >
-                  {isCompact ? '%' : `-${discount}%`}
-                </Badge>
-              )}
-              {data.hasVideo && (
-                <Badge
-                  bg="info"
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: discount > 0 ? 12 : 0,
-                  }}
-                >
-                  Video
-                </Badge>
-              )}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {discount > 0 && (
+                  <Badge bg="danger">{isCompact ? '%' : `-${discount}%`}</Badge>
+                )}
+                {data.version > 1 && <Badge bg="warning">v{data.version}</Badge>}
+                {data.hasVideo && <Badge bg="info">Video</Badge>}
+              </div>
             </>
           </div>
           {!isCompact && (

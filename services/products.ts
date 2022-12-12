@@ -23,6 +23,7 @@ type FetchedProduct = {
     currency: string;
   };
   sku: string;
+  version: number;
 };
 
 function getTitleFromSlug(url: string) {
@@ -101,6 +102,7 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
         currentPrice: productData.price.final,
         regularPrice: productData.price.regular,
         currency: productData.price.currency,
+        version: productData.version,
         hasVideo,
       };
     } else {
