@@ -82,6 +82,13 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
           LABELS.includes(text.toLowerCase()) || stickerId === LOW_IN_STOCK_ID
       );
 
+      const NEW_ID = 10995;
+      const NEW_LABELS = ['NOWOŚĆ'];
+      const isNew = flatStickers.some(
+        ({ text, stickerId }) =>
+          NEW_LABELS.includes(text.toLowerCase()) || stickerId === NEW_ID
+      );
+
       let hasVideo = false;
       const videoRegex = /window.videoConfig=(.*?);/;
       const videoStr = videoRegex.exec(text);
@@ -97,13 +104,14 @@ async function getProductDetails(url: string): Promise<ProductDetails> {
 
       return {
         sizes,
-        isLowInStock,
         imageUrl: productData.img.front,
         currentPrice: productData.price.final,
         regularPrice: productData.price.regular,
         currency: productData.price.currency,
         version: productData.version,
+        isLowInStock,
         hasVideo,
+        isNew,
       };
     } else {
       throw new Error();

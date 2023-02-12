@@ -122,10 +122,13 @@ const Product = React.memo(
                   flexDirection: 'column',
                 }}
               >
+                {data.isNew && <Badge bg="primary">Nowość</Badge>}
+                {data.version > 1 && (
+                  <Badge bg="warning">v{data.version}</Badge>
+                )}
                 {discount > 0 && (
                   <Badge bg="danger">{isCompact ? '%' : `-${discount}%`}</Badge>
                 )}
-                {data.version > 1 && <Badge bg="warning">v{data.version}</Badge>}
                 {data.hasVideo && <Badge bg="info">Video</Badge>}
               </div>
             </>

@@ -14,6 +14,7 @@ export type ProductDetails = {
   currency: string;
   hasVideo: boolean;
   version: number;
+  isNew: boolean;
 };
 
 export type FormElement<T extends string> = HTMLFormElement & {
