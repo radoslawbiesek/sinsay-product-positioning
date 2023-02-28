@@ -27,12 +27,16 @@ type FetchedProduct = {
 };
 
 function getTitleFromSlug(url: string) {
-  const slugArr = url.split('-').slice(0, -2);
-  const urlArr = slugArr[0].split('/');
-  const firstPart = urlArr[urlArr.length - 1];
-  slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
+  try {
+    const slugArr = url.split('-').slice(0, -2);
+    const urlArr = slugArr[0].split('/');
+    const firstPart = urlArr[urlArr.length - 1];
+    slugArr[0] = firstPart[0].toUpperCase() + firstPart.slice(1);
 
-  return slugArr.join(' ');
+    return slugArr.join(' ');
+  } catch {
+    return 'Brak tytułu';
+  }
 }
 
 function handleError(error: unknown): never {
