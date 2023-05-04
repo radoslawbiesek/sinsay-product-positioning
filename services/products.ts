@@ -51,7 +51,14 @@ function handleError(error: unknown): never {
 }
 
 async function getPage(url: string): Promise<string> {
-  const response = await fetch(url);
+  const response = await fetch('/api/proxy', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ url }),
+  });
+
   if (response.status !== 200) throw new HttpError(response.status);
 
   const text = await response.text();
